@@ -14,26 +14,19 @@ namespace CadastroCliente.Controllers
     {
         private Contexto db = new Contexto();
 
-        // GET: Pessoas
+        // GET
         public ActionResult Index()
         {
-            return View(db.Pessoas.ToList());
+            return View();
+        }
+   
+
+        public JsonResult GetPessoasData(string textoBusca)
+        {
+            var data = db.Pessoas.Where(a => a.Nome.Contains(textoBusca) || a.SobreNome.Contains(textoBusca)).OrderBy(a => a.Nome).ToList();
+            return new JsonResult {Data = data, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }
 
-        // GET: Pessoas/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Pessoa pessoa = db.Pessoas.Find(id);
-            if (pessoa == null)
-            {
-                return HttpNotFound();
-            }
-            return View(pessoa);
-        }
 
         // GET: Pessoas/Create
         public ActionResult Create()
@@ -89,30 +82,14 @@ namespace CadastroCliente.Controllers
             return View(pessoa);
         }
 
-        // GET: Pessoas/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Pessoa pessoa = db.Pessoas.Find(id);
-            if (pessoa == null)
-            {
-                return HttpNotFound();
-            }
-            return View(pessoa);
-        }
-
-        // POST: Pessoas/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
             Pessoa pessoa = db.Pessoas.Find(id);
             db.Pessoas.Remove(pessoa);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return  new HttpStatusCodeResult(HttpStatusCode.OK); ;
         }
 
         protected override void Dispose(bool disposing)
