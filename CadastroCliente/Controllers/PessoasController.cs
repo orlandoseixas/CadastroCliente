@@ -48,7 +48,7 @@ namespace CadastroCliente.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(pessoa);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: Pessoas/Edit/5
@@ -77,9 +77,9 @@ namespace CadastroCliente.Controllers
             {
                 db.Entry(pessoa).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
-            return View(pessoa);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         [HttpPost]
