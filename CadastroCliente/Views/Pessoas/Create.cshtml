@@ -1,56 +1,102 @@
-﻿@model CadastroCliente.Models.Pessoa
-
+﻿
 @{
-    ViewBag.Title = "Create";
+  ViewBag.Title = "Criar Cliente";
 }
 
-<h2>Create</h2>
-
-
-@using (Html.BeginForm()) 
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
 {
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Pessoa</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SobreNome, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SobreNome, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SobreNome, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Endereco, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Endereco, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Endereco, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
+  @Html.AntiForgeryToken()
 }
+
+
+<h2>@ViewBag.Title</h2>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  class FormCriar extends React.Component {
+  constructor(props) {
+  super(props);
+  this.state = {value: ''};
+
+  this.handleChange = this.handleChange.bind(this);
+  this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+  const target = event.target;
+  const nome = target.name;
+  const valor = target.value;
+
+  this.setState({[nome]: valor});
+  }
+
+  handleSubmit(event) {
+  event.preventDefault();
+
+  const nome = this.state.inputNome;
+  const sobreNome = this.state.inputSobreNome;
+  const endereco = this.state.inputEndereco;
+
+
+  const form = $('#__AjaxAntiForgeryForm');
+  const token = $('input[name="__RequestVerificationToken"]', form).val();
+
+  $.ajax({
+  type: "POST",
+  url: "/Pessoas/Create",
+  data: {
+  __RequestVerificationToken: token,
+
+  Nome: nome,
+  SobreNome: sobreNome,
+  Endereco: endereco
+  },
+  success: function() {
+  alert('O Cliente foi criado.');
+  
+  },
+  error: function() {alert('Não foi possível criar o cliente.');}
+  });
+
+  }
+
+  render() {
+  return (
+  <div>
+    <form onSubmit={this.handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="inputNome">Nome</label>
+        <input type="text" value={this.state.inputNome} onChange={this.handleChange} name="inputNome" placeholder="Nome" className="form-control text-box single-line" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="inputSobreNome">Sobrenome</label>
+        <input type="text" value={this.state.inputSobreNome} onChange={this.handleChange} name="inputSobreNome" placeholder="Sobrenome" className="form-control text-box single-line" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="inpuinputEndereco">Endereco</label>
+        <input type="text" value={this.state.inputEndereco} onChange={this.handleChange} name="inputEndereco" placeholder="Endereço" className="form-control text-box single-line" />
+      </div>
+        <input type="submit" value="Criar" className="btn btn-default" />
+    </form>
+    <div id="griddata"></div>
+  </div>
+  );
+  }
+  }
+
+  ReactDOM.render(
+  <FormCriar />,
+  document.getElementById('root')
+  );
+
+</script>
+
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+  @Html.ActionLink("Voltar", "Index")
 </div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+  @Scripts.Render("~/bundles/jqueryval")
 }

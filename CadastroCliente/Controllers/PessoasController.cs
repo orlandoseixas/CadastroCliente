@@ -39,7 +39,7 @@ namespace CadastroCliente.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Nome,SobreNome,Endereco")] Pessoa pessoa)
+        public ActionResult Create([Bind(Include = "Nome,SobreNome,Endereco")] Pessoa pessoa)
         {
             if (ModelState.IsValid)
             {
